@@ -46,6 +46,8 @@ public class UserServiceImpl implements UserService {
 		}
 		UserModel userModel = new UserModel();
 		//将数据层的字段复制到传输层的对象上去
+		//我们需要知道的是  BeanUtils.copyProperties复制两个类对象中的参数的时候  需要两个类对象参数名称和类型都是一致的  否则无法传输
+		//debug了以后发现了这个问题 需要注意
 		BeanUtils.copyProperties(userDO, userModel);
 		if (userPasswordDO!=null) {
 			userModel.setEncrpt_password(userPasswordDO.getEncrptPassword());
