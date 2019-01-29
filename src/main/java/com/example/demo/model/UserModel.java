@@ -9,7 +9,8 @@ package com.example.demo.model;
  * 2019年1月25日-下午4:58:38
  * 在对数据传输层操作的数据其实并不是我们业务逻辑层所操作的对象   我们只是将这些数据形式按不同的表去存储。
  */
-public class UserModel {
+public class UserModel{
+	
 	private Integer id;
 	private String name;
 	private Byte gender;

@@ -1,5 +1,8 @@
 package com.example.demo.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.druid.util.StringUtils;
 import com.example.demo.controller.viewobject.UserVO;
 import com.example.demo.error.BusinessException;
 import com.example.demo.error.EmBusinessError;
@@ -20,10 +24,12 @@ import com.example.demo.model.UserModel;
 import com.example.demo.response.CommonReturnType;
 import com.example.demo.service.UserService;
 
+import sun.misc.BASE64Encoder;
+
 
 @Controller("user")
 @RequestMapping("/user")
-@CrossOrigin
+@CrossOrigin(allowCredentials="true",allowedHeaders="*")
 public class UserController extends BaseController{
 	
 	@Autowired
@@ -33,8 +39,7 @@ public class UserController extends BaseController{
 	private HttpServletRequest HttpServletRequest;
 	
 	//用户获取otp短信接口
-	
-	@RequestMapping(value="/getotp",method=RequestMethod.GET,consumes="application/json")
+	@RequestMapping(value="/getotp",method=RequestMethod.POST,consumes="application/x-www-form-urlencoded")
 	@ResponseBody
 	public CommonReturnType getOtp(@RequestParam(value="telephone",required=false)String telephone) {
 		
@@ -50,6 +55,67 @@ public class UserController extends BaseController{
 		
 		//将OTP验证码通过短信通道发送给用户,省略
 		System.out.println("telephone= "+telephone +" &otpCode= "+otpCode);
+		
+		return CommonReturnType.create(null);
+	}
+	
+	//用户注册接口
+	@RequestMapping(value="/register",method=RequestMethod.POST,consumes="application/x-www-form-urlencoded")
+	@ResponseBody
+	public CommonReturnType register(@RequestParam(value="telephone",required=false)String telephone,
+			@RequestParam(value="otpCode",required=false)String otpCode,
+			@RequestParam(value="name",required=false)String name,
+			@RequestParam(value="gender",required=false)Byte gender,
+			@RequestParam(value="age",required=false)String age,
+			@RequestParam(value="password",required=false)String password) throws BusinessException, NoSuchAlgorithmException, UnsupportedEncodingException {
+		
+		//验证手机号和对应的otpcode是否相符合
+		String inSessionotpcode = (String) this.HttpServletRequest.getSession().getAttribute(telephone);
+		if (!StringUtils.equals(otpCode, inSessionotpcode)) {
+			throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"短信验证码不符合");
+		}
+		
+		//用户注册流程
+		UserModel userModel = new UserModel();
+		userModel.setName(name);
+		userModel.setGender(gender);
+		userModel.setAge(age);
+		userModel.setTelephone(telephone);
+		userModel.setRegisterMode("byphone");
+		userModel.setEncrpt_password(this.EncodeByMD5(password));
+		
+		UserService.register(userModel);
+		
+		return null;
+	}
+	
+	public String EncodeByMD5(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException
+	{
+		//确定计算方法
+		MessageDigest md5 = MessageDigest.getInstance("MD5");
+		BASE64Encoder base64Encoder = new BASE64Encoder();
+		//加密字符串
+		String newstr = base64Encoder.encode(md5.digest(str.getBytes("utf-8")));
+		return newstr;
+	}
+	
+	//用户登录接口
+	@RequestMapping(value="/login",method=RequestMethod.POST,consumes="application/x-www-form-urlencoded")
+	@ResponseBody
+	public CommonReturnType login(@RequestParam(value="telephone",required=false)String telephone,
+			@RequestParam(value="password",required=false)String password) throws BusinessException, NoSuchAlgorithmException, UnsupportedEncodingException {
+		
+		//入参校验
+		if (org.apache.commons.lang3.StringUtils.isEmpty(telephone)
+				||org.apache.commons.lang3.StringUtils.isEmpty(password)) {
+			throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+		}
+		
+		UserModel userModel = UserService.validateLogin(telephone, this.EncodeByMD5(password));
+		
+		//将登陆凭证加入到用户登陆成功的session内
+		HttpServletRequest.getSession().setAttribute("IS_LOGIN", true);
+		HttpServletRequest.getSession().setAttribute("LOGIN_USER", userModel);
 		
 		return CommonReturnType.create(null);
 	}

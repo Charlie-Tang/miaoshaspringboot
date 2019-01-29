@@ -1,13 +1,18 @@
 package com.example.demo.service.Impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dao.UserDOMapper;
 import com.example.demo.dao.UserPasswordDOMapper;
 import com.example.demo.dataobject.UserDO;
 import com.example.demo.dataobject.UserPasswordDO;
+import com.example.demo.error.BusinessException;
+import com.example.demo.error.EmBusinessError;
 import com.example.demo.model.UserModel;
 import com.example.demo.service.UserService;
 /**
@@ -38,7 +43,7 @@ public class UserServiceImpl implements UserService {
 		return convertFromDataObject(userDO,userPasswordDO);
 	}
 	
-	
+	//将我们dao层对象转换为传输层所使用的对象
 	private UserModel convertFromDataObject(UserDO userDO,UserPasswordDO userPasswordDO)
 	{
 		if (userDO==null) {
@@ -55,5 +60,70 @@ public class UserServiceImpl implements UserService {
 		return userModel;
 		
 	}
+
+
+	@Override
+	@Transactional
+	public void register(UserModel userModel) throws BusinessException {
+		if (userModel==null) {
+			throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+		}
+		
+		if (StringUtils.isEmpty(userModel.getName()) 
+				|| userModel.getGender() == null 
+				|| userModel.getAge() == null
+				|| StringUtils.isEmpty(userModel.getTelephone())) {
+			throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+		}
+		
+		UserDO userDO = convertFromModel(userModel);
+		try {
+			userDOMapper.insertSelective(userDO);
+		} catch (DuplicateKeyException e) {
+			throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"手机号已重复注册");
+		}
+		
+		//尽量避免在数据库中使用null字段
+		UserPasswordDO userPasswordDO = convertPasswordFromModel(userModel,userDO);
+		userPasswordDOMapper.insertSelective(userPasswordDO);
+	}
 	
+	private UserDO 	convertFromModel(UserModel userModel) {
+		if (userModel==null) {
+			return null;
+		}
+		UserDO userDO = new UserDO();
+		BeanUtils.copyProperties(userModel, userDO);
+		
+		return userDO;
+	}
+	
+	private UserPasswordDO convertPasswordFromModel(UserModel userModel,UserDO userDO) {
+		if (userModel==null) {
+			return null;
+		}
+		
+		UserPasswordDO userPasswordDO = new UserPasswordDO();
+		userPasswordDO.setEncrptPassword(userModel.getEncrpt_password());
+		userPasswordDO.setUserId(userDO.getId());
+		return userPasswordDO;
+	}
+
+	@Override
+	public UserModel validateLogin(String telephone, String password) throws BusinessException {
+		//通过用户手机获取用户信息
+		UserDO userDO = userDOMapper.selectByTelePhone(telephone);
+		if (userDO==null) {
+			throw new BusinessException(EmBusinessError.USER_LOGIN_FAIL);
+		}
+		UserPasswordDO userPasswordDO = userPasswordDOMapper.selectByUserId(userDO.getId());
+		UserModel userModel = convertFromDataObject(userDO, userPasswordDO);
+		
+		//比对用户信息内加密
+		if (!StringUtils.equals(password, userModel.getEncrpt_password())) {
+			throw new BusinessException(EmBusinessError.USER_LOGIN_FAIL);
+		}
+		return userModel; 
+		
+	}
 }

@@ -1,0 +1,9 @@
+发现一个问题 
+使用application/x-www-form-urlencoded时可以使用POST请求去传递参数
+但是如果在Controller中将该方法设置为application/json时就无法获取了
+只能使用get方法  那么是为什么呢
+
+当你需要使用content-type=application/json且后台使用@RequestBody，你无法再从paramter中获取请求数据。
+这就是我们为什么无法通过@RequestParam这个注解去获得参数了
+
+选择application/x-www-form-urlencoded还是application/json，得看你是否有从request.paramter获取请求数据的需求。
