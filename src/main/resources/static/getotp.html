@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>获取验证码</title>
+</head>
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+	jQuery(document).ready(function(){
+		$("#getotp").on("click",function(){
+			var telephone = $("#telephone").val();
+			if(telephone==null||telephone==""){
+				alert("手机号不能为空");
+				return false;
+				}
+			$.ajax({
+				type:"GET",
+				contentType:"application/json",
+				url:"http://localhost:8888/user/getotp",
+				data:{
+					"telephone":$("#telephone").val(),
+					},
+				success:function(data){
+						if(data.status=="success"){
+							alert("otp已经发送到你的手机上，请注意查收");
+						}else
+							{
+							alert("otp发送失败，原因为："+data.data.errMsg);
+						}
+					},
+				error:function(data){
+						alert("otp发送失败，原因是："+data.responseText());
+					},
+				});
+			});
+				return false;
+		});
+	</script>
+<body>
+	<div>
+		<h3>获取opt信息</h3>
+		<div>
+			<label>手机号</label>
+			<div>
+				<input type="text" placeholder="手机号" name="telephone" id="telephone">
+			</div>
+		</div>
+		<div>
+			<button id="getotp" type="submit">
+				获取otp短信
+			</button>
+		</div>
+	</div>
+</body>
+</html>
