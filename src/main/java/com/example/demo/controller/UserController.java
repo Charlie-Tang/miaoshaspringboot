@@ -62,12 +62,12 @@ public class UserController extends BaseController{
 	//用户注册接口
 	@RequestMapping(value="/register",method=RequestMethod.POST,consumes="application/x-www-form-urlencoded")
 	@ResponseBody
-	public CommonReturnType register(@RequestParam(value="telephone",required=false)String telephone,
-			@RequestParam(value="otpCode",required=false)String otpCode,
-			@RequestParam(value="name",required=false)String name,
-			@RequestParam(value="gender",required=false)Byte gender,
-			@RequestParam(value="age",required=false)String age,
-			@RequestParam(value="password",required=false)String password) throws BusinessException, NoSuchAlgorithmException, UnsupportedEncodingException {
+	public CommonReturnType register(@RequestParam(value="telephone")String telephone,
+			@RequestParam(value="otpCode")String otpCode,
+			@RequestParam(value="name")String name,
+			@RequestParam(value="gender")Byte gender,
+			@RequestParam(value="age")String age,
+			@RequestParam(value="password")String password) throws BusinessException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		
 		//验证手机号和对应的otpcode是否相符合
 		String inSessionotpcode = (String) this.HttpServletRequest.getSession().getAttribute(telephone);
@@ -86,9 +86,10 @@ public class UserController extends BaseController{
 		
 		UserService.register(userModel);
 		
-		return null;
+		return CommonReturnType.create(null);
 	}
 	
+	//将密码转码为MD5格式
 	public String EncodeByMD5(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException
 	{
 		//确定计算方法

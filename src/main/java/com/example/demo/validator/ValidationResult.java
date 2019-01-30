@@ -3,20 +3,21 @@
  */
 package com.example.demo.validator;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author tangqichang
- *
+ *判空的校验器
  * 2019年1月29日-下午5:53:42
  */
 public class ValidationResult {
 	//校验结果是否有错
-	private boolean hasErrors;
+	private boolean hasErrors = false;
 	//存放错误信息的map
-	private Map<String, String> errorMsgMap;
+	private Map<String, String> errorMsgMap = new HashMap<String, String>();
 	public boolean isHasErrors() {
 		return hasErrors;
 	}

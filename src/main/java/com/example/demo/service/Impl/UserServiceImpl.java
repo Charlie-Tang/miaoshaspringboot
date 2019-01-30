@@ -15,6 +15,8 @@ import com.example.demo.error.BusinessException;
 import com.example.demo.error.EmBusinessError;
 import com.example.demo.model.UserModel;
 import com.example.demo.service.UserService;
+import com.example.demo.validator.ValidationResult;
+import com.example.demo.validator.ValidatorImpl;
 /**
  * 
  * @author tangqichang
@@ -30,6 +32,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserPasswordDOMapper userPasswordDOMapper;
 	
+	@Autowired
+	private ValidatorImpl validator;
 	
 	@Override
 	public UserModel getUserById(Integer id) {
@@ -69,11 +73,16 @@ public class UserServiceImpl implements UserService {
 			throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
 		}
 		
-		if (StringUtils.isEmpty(userModel.getName()) 
-				|| userModel.getGender() == null 
-				|| userModel.getAge() == null
-				|| StringUtils.isEmpty(userModel.getTelephone())) {
-			throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+//		if (StringUtils.isEmpty(userModel.getName()) 
+//				|| userModel.getGender() == null 
+//				|| userModel.getAge() == null
+//				|| StringUtils.isEmpty(userModel.getTelephone())) {
+//			throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+//		}
+		
+		ValidationResult result = validator.validate(userModel);
+		if (result.isHasErrors()) {
+			throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,result.getErrMsg());
 		}
 		
 		UserDO userDO = convertFromModel(userModel);
@@ -116,6 +125,7 @@ public class UserServiceImpl implements UserService {
 		if (userDO==null) {
 			throw new BusinessException(EmBusinessError.USER_LOGIN_FAIL);
 		}
+		//在这里由于我们另一张表的id是自增的，所以可能发生无法获取userid的现象  需要到mapper.xml中声明
 		UserPasswordDO userPasswordDO = userPasswordDOMapper.selectByUserId(userDO.getId());
 		UserModel userModel = convertFromDataObject(userDO, userPasswordDO);
 		

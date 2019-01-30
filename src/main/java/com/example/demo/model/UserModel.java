@@ -3,6 +3,13 @@
  */
 package com.example.demo.model;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+
 /**
  * @author tangqichang
  *
@@ -12,13 +19,19 @@ package com.example.demo.model;
 public class UserModel{
 	
 	private Integer id;
+	@NotBlank(message = "用户名不能为空")
 	private String name;
+	@NotNull(message="性别不能不填写")
 	private Byte gender;
+	@NotNull(message="年龄不能不填写")
+	@Min(value=0,message="年龄必须大于0岁")
+	@Max(value=150,message="年龄不能大于150岁")
 	private String age;
+	@NotBlank(message="手机号不得为空")
 	private String telephone;
 	private String registerMode;
 	private String thirdPartyId;
-	
+	@NotBlank(message="密码不得为空")
 	private String encrpt_password;
 
 	public Integer getId() {
