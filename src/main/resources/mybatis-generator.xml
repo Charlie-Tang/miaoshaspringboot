@@ -30,9 +30,11 @@
 <!--         enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> -->
 <!--         <table tableName="user_password" domainObjectName="UserPasswordDO" enableCountByExample="false" -->
 <!--         enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> -->
-        <table tableName="item" domainObjectName="ItemDO" enableCountByExample="false"
-        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-        <table tableName="item_stock" domainObjectName="ItemstockDO" enableCountByExample="false"
+<!--         <table tableName="item" domainObjectName="ItemDO" enableCountByExample="false" -->
+<!--         enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> -->
+<!--         <table tableName="item_stock" domainObjectName="ItemstockDO" enableCountByExample="false" -->
+<!--         enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table> -->
+        <table tableName="order_info" domainObjectName="OrderDO" enableCountByExample="false"
         enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
     </context>
 </generatorConfiguration>

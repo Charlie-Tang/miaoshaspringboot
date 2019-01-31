@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>商品详情页</title>
+<link href="C:\Users\tangqichang\eclipse-workspace\miaoshaspringboot\src\main\resources/static/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="C:\Users\tangqichang\eclipse-workspace\miaoshaspringboot\src\main\resources/static/assets/global/css/components.css" rel="stylesheet" type="text/css"/>
+<link href="C:\Users\tangqichang\eclipse-workspace\miaoshaspringboot\src\main\resources/static/assets/admin/pages/css/login.css" rel="stylesheet" type="text/css"/>
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+</head>
+<body class="login">
+	<div class="content">
+		<h3 class="form-title">商品详情</h3>
+		<div class="form-group">
+			<label class="control-label">商品名</label>
+			<div>
+				<label class="control-label"  name="title" id="title"></label>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label">价格</label>
+			<div>
+				<label class="control-label"  name="price" id="price"></label>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label">描述</label>
+			<div>
+				<label class="control-label"  name="description" id="description"></label>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label">库存</label>
+			<div>
+				<label class="control-label"  name="stock" id="stock"></label>
+			</div>
+		</div>
+		<div class="form-group">
+			<div>
+				<img style="width:200px;height:auto" name="imgUrl" id="imgUrl">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label">销量</label>
+			<div>
+				<label class="control-label"  name="sales" id="sales"></label>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+function getParam(paramName) {            
+	paramValue = "", isFound = !1;         
+	if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) {               
+		arrSource = unescape(this.location.search).substring(1, this.location.search.length).split("&"), i = 0;               
+		while (
+				i < arrSource.length && !isFound) arrSource[i].indexOf("=") > 0 && arrSource[i].split("=")[0].toLowerCase() ==                  paramName.toLowerCase() && (paramValue = arrSource[i].split("=")[1], isFound = !0), 
+				i++         }          
+	 return paramValue == "" && (paramValue = null), paramValue      
+	 }
+
+var g_itemVO = {};
+	jQuery(document).ready(function(){
+		//获取商品详情
+			$.ajax({
+				type:"GET",
+				url:"http://localhost:8888/Item/getItem",
+				data:{
+					"id":getParam("id"),
+					},
+				xhrFields:{withCredentials:true},
+				success:function(data){
+					if(data.status == "success"){
+						g_itemVO = data.data;
+						reloadDom();
+						}else
+						{
+						alert("获取信息失败，原因为："+data.data.errMsg);
+						}
+					},
+				error:function(data){
+						alert("获取信息失败，原因是："+data.responseText);
+					}
+				});
+		});
+
+	function reloadDom(){
+		$("#title").text(g_itemVO.title);
+		$("#description").text(g_itemVO.description);
+		$("#stock").text(g_itemVO.stock);
+		$("#price").text(g_itemVO.price);
+		$("#sales").text(g_itemVO.sales);
+		$("#imgUrl").attr("src",g_itemVO.imgUrl);
+		}
+	</script>
+
+</html>

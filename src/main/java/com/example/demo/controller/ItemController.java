@@ -1,9 +1,8 @@
-/**
- * 
- */
 package com.example.demo.controller;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +62,21 @@ public class ItemController extends BaseController{
 		ItemVO itemVO = new ItemVO();
 		BeanUtils.copyProperties(itemModel,itemVO);
 		return itemVO;
+	}
+	
+	//商品列表页面浏览
+	@RequestMapping(value="/list",method=RequestMethod.GET)
+	@ResponseBody
+	public CommonReturnType listItem() {
+		
+		List<ItemModel> list = itemService.listItem();
+		//使用stream api将list内的listModel转化为itemVO
+		List<ItemVO> itemVOlist = list.stream().map(itemModel -> {
+			ItemVO itemVO = this.itemVOConvertFrmoItemModel(itemModel);
+			return itemVO;
+		}).collect(Collectors.toList());
+		
+		return CommonReturnType.create(itemVOlist);
 	}
 	
 	//商品详情页浏览

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.example.demo.error;
 
 /**
@@ -10,6 +7,10 @@ package com.example.demo.error;
  */
 public class BusinessException extends Exception implements CommonError{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4586789845574329434L;
 	private CommonError commonError;
 	//直接接受EmBusinessError的传参用于构造业务异常
 	public BusinessException(CommonError CommonError)

@@ -1,10 +1,8 @@
-/**
- * 
- */
 package com.example.demo.service.Impl;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +37,7 @@ public class ItemServiceImpl implements ItemService {
 	@Autowired
 	private ItemstockDOMapper itemstockDOMapper;
 	
+	//创建商品
 	@Transactional
 	@Override
 	public ItemModel createItem(ItemModel itemModel) throws BusinessException {
@@ -86,12 +85,21 @@ public class ItemServiceImpl implements ItemService {
 		return ItemstockDO;
 	}
 	
-	
+	//通过jdk1.8的stream()方法将商品列表展示出来
 	@Override
 	public List<ItemModel> listItem() {
-		return null;
+		
+		List<ItemDO> list = itemDOMapper.listItem();
+		List<ItemModel> ModelList = list.stream().map(itemDO ->{
+			ItemstockDO itemstockDO = itemstockDOMapper.selectByItemid(itemDO.getId());
+			ItemModel itemModel = this.ItemModelConvertFromItemOBj(itemDO, itemstockDO);
+			return itemModel;
+		}).collect(Collectors.toList());
+		
+		return ModelList;
 	}
-
+	
+	//通过用户id获得商品信息
 	@Override
 	public ItemModel getItemById(Integer id) {
 		
@@ -117,6 +125,20 @@ public class ItemServiceImpl implements ItemService {
 		itemModel.setStock(itemstockDO.getStock());
 		
 		return itemModel;
+	}
+	
+	//减少库存标志位
+	@Transactional
+	@Override
+	public Boolean decreaseStock(Integer itemid, Integer amount) throws BusinessException {
+		
+		int affectedRow = itemstockDOMapper.decreaseStock(itemid, amount);
+		if (affectedRow>0) {
+			//更新库存成功
+			return true;
+		}else {
+			return false;
+		}
 	}
 
 }

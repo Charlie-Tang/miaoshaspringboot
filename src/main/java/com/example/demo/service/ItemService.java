@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.example.demo.service;
 
 import java.util.List;
@@ -23,4 +20,6 @@ public interface ItemService {
 	
 	//商品详情浏览
 	ItemModel getItemById(Integer id);
+	
+	Boolean decreaseStock(Integer itemid,Integer amount)throws BusinessException;
 }

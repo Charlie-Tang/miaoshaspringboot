@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.example.demo.controller.viewobject;
 
 import java.math.BigDecimal;
