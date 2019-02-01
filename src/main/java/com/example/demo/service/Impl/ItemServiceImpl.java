@@ -16,7 +16,9 @@ import com.example.demo.dataobject.ItemstockDO;
 import com.example.demo.error.BusinessException;
 import com.example.demo.error.EmBusinessError;
 import com.example.demo.model.ItemModel;
+import com.example.demo.model.PromoModel;
 import com.example.demo.service.ItemService;
+import com.example.demo.service.PromoService;
 import com.example.demo.validator.ValidationResult;
 import com.example.demo.validator.ValidatorImpl;
 
@@ -36,6 +38,9 @@ public class ItemServiceImpl implements ItemService {
 	
 	@Autowired
 	private ItemstockDOMapper itemstockDOMapper;
+	
+	@Autowired
+	private PromoService promoService;
 	
 	//创建商品
 	@Transactional
@@ -99,7 +104,7 @@ public class ItemServiceImpl implements ItemService {
 		return ModelList;
 	}
 	
-	//通过用户id获得商品信息
+	//通过id获得商品信息
 	@Override
 	public ItemModel getItemById(Integer id) {
 		
@@ -113,6 +118,12 @@ public class ItemServiceImpl implements ItemService {
 		
 		//将dataobject转换为model
 		ItemModel itemModel = this.ItemModelConvertFromItemOBj(itemDO,itemstockDO);
+		
+		//获取活动商品信息
+		PromoModel promoModel = promoService.getPromoById(itemModel.getId());
+		if (promoModel!=null && promoModel.getStatus()!=3) {
+			itemModel.setPromoModel(promoModel);
+		}
 		
 		return itemModel;
 	}
@@ -139,6 +150,12 @@ public class ItemServiceImpl implements ItemService {
 		}else {
 			return false;
 		}
+	}
+
+	@Override
+	@Transactional
+	public void increaseSales(Integer itemid, Integer amount) throws BusinessException {
+		itemDOMapper.increaseSales(itemid, amount);
 	}
 
 }

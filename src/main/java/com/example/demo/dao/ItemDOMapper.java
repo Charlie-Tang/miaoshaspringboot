@@ -2,6 +2,8 @@ package com.example.demo.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.example.demo.dataobject.ItemDO;
 
 public interface ItemDOMapper {
@@ -55,4 +57,7 @@ public interface ItemDOMapper {
      * @mbg.generated Wed Jan 30 14:45:24 CST 2019
      */
     int updateByPrimaryKey(ItemDO record);
+    
+    int increaseSales(@Param("id")Integer id,@Param("amount")Integer amount);
+    
 }

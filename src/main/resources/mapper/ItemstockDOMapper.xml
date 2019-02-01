@@ -122,10 +122,10 @@
       item_id = #{itemId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  
+<!--   在编写sql语句的时候如果条件没有设置在一起有可能报错BadSql，注意审查 -->
   <update id="decreaseStock" >
     update item_stock
-    set stock = stock -#{amount},
-    where item_id = #{itemId} and stock >= #{amount}
+    set stock = stock - #{amount}
+    where item_id = #{itemid} and stock >= #{amount}
   </update>
 </mapper>

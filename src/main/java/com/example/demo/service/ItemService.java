@@ -21,5 +21,9 @@ public interface ItemService {
 	//商品详情浏览
 	ItemModel getItemById(Integer id);
 	
+	//是否下单成功
 	Boolean decreaseStock(Integer itemid,Integer amount)throws BusinessException;
+	
+	//销量增加 
+	void increaseSales(Integer itemid,Integer amount)throws BusinessException;
 }
