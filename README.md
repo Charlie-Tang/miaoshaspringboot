@@ -2,6 +2,13 @@
 springboot-seckill
 
 准备工作：springboot整合ssm等
+我们在搭建一个springboot项目的时候首先需要导入插件或者使用start.spring.io去创建，其实两者并没有太大区别，都是使用同样的方法创建
+项目。需要了解的是：在2.0.0后的版本所使用的是Netty服务器，而之前默认使用的都是Tomcat服务器。
+springboot由于集成了spring全家桶的各个包，所以特别好用，在pom.xml中就可直接导入相关jar。而相关参数配置也摒弃掉了之前项目的各种xml参数
+配置，而直接使用application.properties去配置各种参数，极大提高了项目的可维护性和入门难度。
+同时，我们dao层的配置可以直接通过配置mybatis-generator.xml来在maven中直接调用，通过该方法，使得我们创建dao层和domain所使用的时间大大降低，
+通过其创建的各种mapper中的方法，使得我们service层能够直接调用相关方法。
+
 整体思路:
 
 首先项目其实是定义了Error类和CommonReturnType类，通过前者去抛出和定义各种异常，而后者则是对于使用Ajax获取各类数据和跳转界面
