@@ -103,8 +103,8 @@ public class UserController extends BaseController{
 	//用户登录接口
 	@RequestMapping(value="/login",method=RequestMethod.POST,consumes="application/x-www-form-urlencoded")
 	@ResponseBody
-	public CommonReturnType login(@RequestParam(value="telephone",required=false)String telephone,
-			@RequestParam(value="password",required=false)String password) throws BusinessException, NoSuchAlgorithmException, UnsupportedEncodingException {
+	public CommonReturnType login(@RequestParam(value="telephone")String telephone,
+			@RequestParam(value="password")String password) throws BusinessException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		
 		//入参校验
 		if (org.apache.commons.lang3.StringUtils.isEmpty(telephone)
