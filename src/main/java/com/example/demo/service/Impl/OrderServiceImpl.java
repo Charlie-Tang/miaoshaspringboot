@@ -60,15 +60,18 @@ public class OrderServiceImpl implements OrderService {
 			throw new BusinessException(EmBusinessError.USER_NOT_EXIST);
 		}
 		
-		//校验活动信息
+		//通过获取promoid来校验活动信息 
 		if (promoid!=null) {
 			//校验对应活动是否存在这个适用商品
 			if (promoid.intValue()!=itemModel.getPromoModel().getId()) {
 				throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"活动信息不正确"); 
 			}
-			//校验活动是否处于进行中
-			else if (itemModel.getPromoModel().getStatus()!=2) {
+			//校验活动是否处于进行中  可以是1或者是3啊
+			else if (itemModel.getPromoModel().getStatus()==1) {
 				throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"活动还没开始"); 
+			}
+			else if (itemModel.getPromoModel().getStatus()==3) {
+				throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"该活动已经过期"); 
 			}
 		}
 		
@@ -77,6 +80,7 @@ public class OrderServiceImpl implements OrderService {
 		if (!result) {
 			throw new BusinessException(EmBusinessError.USER_NOT_EXIST);
 		}
+		
 		//3.订单入库
 		OrderModel orderModel = new OrderModel();
 		orderModel.setUserId(userid);
@@ -84,6 +88,7 @@ public class OrderServiceImpl implements OrderService {
 		orderModel.setAmount(amount);
 		orderModel.setPromoId(promoid);
 		if (promoid!=null) {
+			//如果
 			orderModel.setItemPrice(itemModel.getPromoModel().getPromoItemPrice());
 		}
 		else {
@@ -93,6 +98,8 @@ public class OrderServiceImpl implements OrderService {
 		orderModel.setOrderamount(orderModel.getItemPrice().multiply(new BigDecimal(amount)));
 		
 		//生成交易流水号
+		//生成交易流水号的好处：首先可以根据日期去清理往期数据  其次通过自增时间戳去获取  并且可以重置
+		//最后两位分库分表位去获取不同信息
 		orderModel.setId(generateOrderNo());
 		OrderDO orderDO = this.OrderDOConvertFromOrderModel(orderModel);
 		orderDOMapper.insertSelective(orderDO);

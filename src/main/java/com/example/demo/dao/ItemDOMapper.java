@@ -39,6 +39,10 @@ public interface ItemDOMapper {
      */
     ItemDO selectByPrimaryKey(Integer id);
     
+    //我突然认识到，可以有许多同名商品  他们之间的唯一区别应该就是各个商品id
+//    ItemDO selectByitemTitle(String title);
+    
+    
     List<ItemDO> listItem();
     
     

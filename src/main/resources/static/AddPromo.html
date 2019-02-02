@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>创建商品</title>
+<link href="C:\Users\tangqichang\eclipse-workspace\miaoshaspringboot\src\main\resources/static/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="C:\Users\tangqichang\eclipse-workspace\miaoshaspringboot\src\main\resources/static/assets/global/css/components.css" rel="stylesheet" type="text/css"/>
+<link href="C:\Users\tangqichang\eclipse-workspace\miaoshaspringboot\src\main\resources/static/assets/admin/pages/css/login.css" rel="stylesheet" type="text/css"/>
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+</head>
+<body class="login">
+	<div class="content">
+		<h3 class="form-title">添加活动信息</h3>
+		<div class="form-group">
+			<label class="control-label">活动信息</label>
+			<div>
+				<input class="form-control" type="text" placeholder="活动信息" name="promoName" id="promoName">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label">开始时间</label>
+			<div>
+				<input class="form-control" type="text" placeholder="开始时间" name="startDate" id="startDate">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label">结束时间</label>
+			<div>
+				<input class="form-control" type="text" placeholder="结束时间" name="endDate" id="endDate">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label">商品id</label>
+			<div>
+				<input class="form-control" type="text" placeholder="商品id" name="itemid" id="itemid">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label">活动价格</label>
+			<div>
+				<input class="form-control" type="text" placeholder="活动价格" name="promoItemPrice" id="promoItemPrice">
+			</div>
+		</div>
+		<div class="form-actions">
+			<button class="btn blue" id="AddPromo" type="submit">
+				提交
+			</button>
+		</div>
+	</div>
+</body>
+<script>
+	jQuery(document).ready(function(){
+		//这里其实需要对我们输入的开始和结束时间做格式转换
+		$("#AddPromo").on("click",function(){
+			var promoName = $("#promoName").val();
+			var startDate = $("#startDate").val();
+			var endDate = $("#endDate").val();
+			var itemid = $("#itemid").val();
+			var promoItemPrice = $("#promoItemPrice").val();
+			if(promoName==null||promoName==""){
+				alert("活动信息不能为空");
+				return false;
+				}
+			if(startDate==null||startDate==""){
+				alert("开始时间不能为空");
+				return false;
+				}
+			if(endDate==null||endDate==""){
+				alert("结束时间不能为空");
+				return false;
+				}
+			if(itemid==null||itemid==""){
+				alert("商品id不能为空");
+				return false;
+				}
+			if(promoItemPrice==null||promoItemPrice==""){
+				alert("活动价格不能为空");
+				return false;
+				}
+			$.ajax({
+				type:"POST",
+				contentType:"application/x-www-form-urlencoded",
+				url:"http://localhost:8888/Item/AddItemPromo",
+				data:{
+					"promoName":promoName,
+					"startDate":startDate,
+					"endDate":endDate,
+					"itemid":itemid,
+					"promoItemPrice":promoItemPrice,
+					},
+				xhrFields:{withCredentials:true},
+				success:function(data){
+					if(data.status == "success"){
+						alert("创建成功");
+						}else
+						{
+						alert("创建失败，原因为："+data.data.errMsg);
+						}
+					},
+				error:function(data){
+						alert("创建失败，原因是："+data.responseText);
+					}
+				});
+			});
+				return false;
+		});
+	</script>
+</html>

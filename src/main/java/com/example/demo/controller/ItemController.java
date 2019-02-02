@@ -75,6 +75,7 @@ public class ItemController extends BaseController{
 		return itemVO;
 	}
 	
+	
 	//商品列表页面浏览
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	@ResponseBody

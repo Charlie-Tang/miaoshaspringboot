@@ -119,7 +119,7 @@ public class ItemServiceImpl implements ItemService {
 		//将dataobject转换为model
 		ItemModel itemModel = this.ItemModelConvertFromItemOBj(itemDO,itemstockDO);
 		
-		//获取活动商品信息
+		//通过活动商品id来获取活动商品信息,在调用函数中做判空处理
 		PromoModel promoModel = promoService.getPromoById(itemModel.getId());
 		if (promoModel!=null && promoModel.getStatus()!=3) {
 			itemModel.setPromoModel(promoModel);

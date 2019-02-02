@@ -10,4 +10,6 @@ import com.example.demo.model.PromoModel;
 public interface PromoService {
 	
 	PromoModel getPromoById(Integer itemid);
+	//注册活动信息到商品上
+	Boolean AddPromoToItem(PromoModel promoModel);
 }
